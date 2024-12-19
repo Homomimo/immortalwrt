@@ -325,12 +325,12 @@
 
 &qusb_phy_0 {
 	status = "okay";
-	vdda-phy-supply = <&usb0_vbus>;
+	vdd-supply = <&usb0_vbus>;
 };
 
 &qusb_phy_1 {
 	status = "okay";
-	vdda-phy-supply = <&usb1_vbus>;
+	vdd-supply = <&usb1_vbus>;
 };
 
 &qpic_nand {
