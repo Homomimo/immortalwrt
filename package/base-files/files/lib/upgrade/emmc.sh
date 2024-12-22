@@ -48,7 +48,7 @@ emmc_upgrade_fit() {
 	if [ "$EMMC_KERN_DEV" ]; then
 		export EMMC_KERNEL_BLOCKS=$(($(get_image "$fit_file" | fwtool -i /dev/null -T - | dd of="$EMMC_KERN_DEV" bs=512 2>&1 | grep "records out" | cut -d' ' -f1)))
 
-		[ -z "$UPGRADE_BACKUP" ] && dd if=/dev/zero of="$EMMC_KERN_DEV" bs=512 seek=$EMMC_KERNEL_BLOCKS count=8
+		[ -z "$UPGRADE_BACKUP" ] && dd emmc_format_overlay "$EMMC_KERN_DEV" "$EMMC_KERNEL_BLOCKS"
 	fi
 }
 
@@ -88,10 +88,10 @@ emmc_format_overlay() {
 		reboot -f
 	}
 
-	mkfs.ext4 -F -L rootfs_data $LOOPDEV
+	mkfs.f2fs -f -l rootfs_data $LOOPDEV
 	if [ -n "$UPGRADE_BACKUP" ]; then
 		mkdir /tmp/new_root
-		mount -t ext4 $LOOPDEV /tmp/new_root && {
+		mount -t f2fs $LOOPDEV /tmp/new_root && {
 			echo "Saving config to rootfs_data."
 			cp -v "$UPGRADE_BACKUP" "/tmp/new_root/$BACKUP_FILE"
 			umount /tmp/new_root

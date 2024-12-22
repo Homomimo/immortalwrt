@@ -74,22 +74,10 @@ done
 echo -e "${reset}"
 echo -ne "${bold}${red}  NSS PKGS${reset}: ${white}"
 
-if cmd=$(command -v apk) > /dev/null; then
-  flags="list -I"
-else
-  cmd=$(command -v opkg)
-  flags="list-installed"
-fi
-
-if [ -z "$cmd" ]; then
-  echo -e "${red}No package manager found${reset}"
-  exit 1
-fi
-
-$cmd $flags | awk -v count=0 -v cmd=$cmd '
+apk list -I | awk -v count=0 '
   /kmod-qca|^nss/ {
   if(count>0) tab="            "
-  print tab (cmd == "/bin/opkg" ? $0 : $1)
+  print tab $1
   count++
 }'
 
